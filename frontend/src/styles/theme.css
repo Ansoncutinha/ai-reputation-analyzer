@@ -1,0 +1,44 @@
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: radial-gradient(circle at 20% 20%, #0f172a, #020617);
+  color: white;
+}
+
+/* glass card */
+.card {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  border: 1px solid rgba(34, 211, 238, 0.2);
+  padding: 20px;
+}
+
+/* glow effect */
+.glow {
+  box-shadow: 0 0 25px rgba(34, 211, 238, 0.4);
+}
+
+/* neon button */
+.btn {
+  background: linear-gradient(90deg, #22d3ee, #06b6d4);
+  padding: 12px;
+  border-radius: 999px;
+  color: black;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  box-shadow: 0 0 20px #22d3ee;
+}
+
+/* input style */
+.input {
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(34,211,238,0.3);
+  padding: 12px;
+  border-radius: 10px;
+  color: white;
+  width: 100%;
+}
