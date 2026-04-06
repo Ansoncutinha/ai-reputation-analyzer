@@ -35,6 +35,16 @@ mongoose.connect(process.env.MONGO_URI)
     )
   })
   .catch(err => {
-    console.error('❌ MongoDB failed:', err.message)
-    process.exit(1)
+    console.warn('⚠️ Main MongoDB connection failed (likely DNS issue). Trying fallback...')
+    mongoose.connect(process.env.MONGO_URI_FALLBACK)
+      .then(() => {
+        console.log('✅ MongoDB connected via FALLBACK')
+        app.listen(process.env.PORT, () =>
+          console.log(`✅ Server running on http://localhost:${process.env.PORT}`)
+        )
+      })
+      .catch(fallbackErr => {
+        console.error('❌ Both MongoDB connections failed:', fallbackErr.message)
+        process.exit(1)
+      })
   })

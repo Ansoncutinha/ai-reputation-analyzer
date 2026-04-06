@@ -17,8 +17,9 @@ const pinkCard = {
 }
 
 function Gauge({ value, max=5 }) {
-  const pct   = Math.min(Math.max(value,1), max) / max
-  const angle = -130 + pct * 260
+  // Scale value from [1, 5]. Total sweep is 180 degrees (-90 to 90) to make a perfect semi-circle.
+  const pct   = (Math.min(Math.max(value, 1), max) - 1) / (max - 1 || 1)
+  const angle = -90 + pct * 180
   const r2rad = deg => (deg * Math.PI) / 180
   const cx=100, cy=105, R=72
 
@@ -27,9 +28,10 @@ function Gauge({ value, max=5 }) {
 
   const colors = ['#ff4d4d','#f97316','#cfff00','#39ff14','#00f5d4']
 
+  // 5 colored segments spanning the 180 degrees (180 / 5 = 36 degrees each)
   const segments = colors.map((c, i) => {
-    const startDeg = -130 + i * 52
-    const endDeg   = startDeg + 52
+    const startDeg = -90 + i * 36
+    const endDeg   = startDeg + 36
     const x1 = cx + R * Math.cos(r2rad(startDeg - 90))
     const y1 = cy + R * Math.sin(r2rad(startDeg - 90))
     const x2 = cx + R * Math.cos(r2rad(endDeg - 90))
@@ -37,8 +39,9 @@ function Gauge({ value, max=5 }) {
     return { c, x1, y1, x2, y2 }
   })
 
+  // Spread the 5 labels evenly across the 180 degree semi-circle (intervals of 180/4 = 45)
   const labels = [1,2,3,4,5].map((n, i) => {
-    const deg = -130 + i * 52
+    const deg = -90 + i * 45
     const lx  = cx + (R + 22) * Math.cos(r2rad(deg - 90))
     const ly  = cy + (R + 22) * Math.sin(r2rad(deg - 90))
     return { n, lx, ly }
