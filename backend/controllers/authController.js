@@ -16,7 +16,7 @@ exports.register = async (req, res) => {
     res.status(201).json({
       _id: user._id, fullName: user.fullName,
       username: user.username, email: user.email,
-      plan: user.plan, token: makeToken(user._id)
+      plan: user.plan, emailAISummary: user.emailAISummary, token: makeToken(user._id)
     })
   } catch (e) { res.status(500).json({ message: e.message }) }
 }
@@ -35,7 +35,7 @@ exports.login = async (req, res) => {
     res.json({
       _id: user._id, fullName: user.fullName,
       username: user.username, email: user.email,
-      plan: user.plan, token: makeToken(user._id)
+      plan: user.plan, emailAISummary: user.emailAISummary, token: makeToken(user._id)
     })
   } catch (e) { res.status(500).json({ message: e.message }) }
 }
@@ -49,7 +49,7 @@ exports.updateMe = async (req, res) => {
     const user = await InsightUser.findById(req.user._id)
     if (!user) return res.status(404).json({ message: 'User not found' })
 
-    const { fullName, username, email, password, currentPassword } = req.body
+    const { fullName, username, email, password, currentPassword, emailAISummary } = req.body
 
     if (password) {
       if (!currentPassword)
@@ -63,11 +63,13 @@ exports.updateMe = async (req, res) => {
     if (username) user.username = username
     if (email)    user.email    = email
     if (password) user.password = password
+    if (emailAISummary !== undefined) user.emailAISummary = emailAISummary
 
     await user.save()
     res.json({ message: 'Updated successfully', user: {
       _id: user._id, fullName: user.fullName,
-      username: user.username, email: user.email
+      username: user.username, email: user.email,
+      plan: user.plan, emailAISummary: user.emailAISummary
     }})
   } catch (e) { res.status(500).json({ message: e.message }) }
 }

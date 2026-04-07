@@ -7,12 +7,12 @@ import API from '../api/axios'
 const API_KEY = '5942eab36f2ab7c4351a260998f791657aa7dff0'
 
 export default function Settings() {
-  const { logout }    = useAuth()
+  const { user, login, logout } = useAuth()
   const { showToast } = useToast()
 
   const [notifications, setNotifications] = useState({
     emailAlerts:       true,
-    weeklyReports:     true,
+    emailAISummary:    user?.emailAISummary ?? true,
     negativeSentiment: true,
   })
 
@@ -22,8 +22,20 @@ export default function Settings() {
   const [saving,      setSaving]      = useState(false)
   const [copied,      setCopied]      = useState(false)
 
-  const toggleNotif = (key) =>
-    setNotifications(prev => ({ ...prev, [key]: !prev[key] }))
+  const toggleNotif = async (key) => {
+    const newVal = !notifications[key]
+    setNotifications(prev => ({ ...prev, [key]: newVal }))
+
+    if (key === 'emailAISummary') {
+      try {
+        await API.put('/auth/me', { emailAISummary: newVal })
+        login({ ...user, emailAISummary: newVal })
+      } catch (err) {
+        showToast('Failed to save preference', 'error')
+        setNotifications(prev => ({ ...prev, [key]: !newVal })) // revert visually on fail
+      }
+    }
+  }
 
   const handleCopy = () => {
     navigator.clipboard.writeText(API_KEY)
@@ -155,7 +167,7 @@ export default function Settings() {
         </div>
         {[
           { key:'emailAlerts',       label:'Email Alerts',              desc:'Get emailed when new feedback arrives' },
-          { key:'weeklyReports',     label:'Weekly Reports',            desc:'Summary of your weekly performance' },
+          { key:'emailAISummary',    label:'Email AI Summaries',        desc:'Receive an email report when AI regenerates insights' },
           { key:'negativeSentiment', label:'Negative Sentiment Alerts', desc:'Alert when negative feedback spikes' },
         ].map(item => (
           <div key={item.key} style={{
