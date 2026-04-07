@@ -4,7 +4,7 @@ const SiteUser = require('../models/SiteUser')
 // GET /api/dashboard?siteId=xxx
 const getDashboard = async (req, res) => {
   try {
-    const { siteId } = req.query
+    const { siteId, tz = 'UTC' } = req.query
     const filter = siteId ? { siteId } : {}
 
     const totalFeedback = await Feedback.countDocuments(filter)
@@ -30,7 +30,7 @@ const getDashboard = async (req, res) => {
       { $match: { ...filter, createdAt: { $gte: thirtyDaysAgo } } },
       { $group: {
           _id: {
-            date:      { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
+            date:      { $dateToString: { format: '%Y-%m-%d', date: '$createdAt', timezone: tz } },
             sentiment: '$sentiment'
           },
           count: { $sum: 1 }

@@ -127,7 +127,8 @@ export default function Dashboard() {
   const [hidden,  setHidden]  = useState({ neg:false, neu:false, pos:false, score:false })
 
   useEffect(() => {
-    API.get('/dashboard')
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'
+    API.get(`/dashboard?tz=${tz}`)
       .then(res => setData(res.data))
       .catch(() => setError('Failed to load dashboard data'))
       .finally(() => setLoading(false))
